@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ public class StatisticsCache {
         clear();
     }
 
-    public void clear() {
+    private void clear() {
         count = 0L;
         sum = ZERO;
         avg = ZERO;
@@ -44,10 +45,31 @@ public class StatisticsCache {
         min = ZERO;
     }
 
-    public void addValue(BigDecimal amount, boolean isFirstTransaction) {
+    public synchronized void update(Operation operation, BigDecimal amount) {
+        switch (operation) {
+            case ADD:
+                addValue(amount);
+                break;
+            case REMOVE:
+                removeValue(amount);
+                break;
+            case CLEAR:
+                clear();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public enum Operation {
+        ADD, REMOVE, CLEAR
+    }
+
+    private void addValue(BigDecimal amount) {
         count += 1L;
         sum = sum.add(amount);
         avg = calculateAverage();
+        boolean isFirstTransaction = transactions.size() == 1;
         if (isFirstTransaction || isGreaterThan(max, amount)) {
             max = amount;
         }
@@ -56,7 +78,7 @@ public class StatisticsCache {
         }
     }
 
-    public void removeValue(BigDecimal amount) {
+    private void removeValue(BigDecimal amount) {
         count -= 1L;
         sum = sum.subtract(amount);
         avg = calculateAverage();
@@ -93,45 +115,14 @@ public class StatisticsCache {
         return currentValue == null || newValue.compareTo(currentValue) > 0;
     }
 
-
-    public BigDecimal getSum() {
-        return sum;
-    }
-
-    public void setSum(BigDecimal sum) {
-        this.sum = sum;
-    }
-
-    public BigDecimal getAvg() {
-        return avg;
-    }
-
-    public void setAvg(BigDecimal avg) {
-        this.avg = avg;
-    }
-
-    public BigDecimal getMax() {
-        return max;
-    }
-
-    public void setMax(BigDecimal max) {
-        this.max = max;
-    }
-
-    public BigDecimal getMin() {
-        return min;
-    }
-
-    public void setMin(BigDecimal min) {
-        this.min = min;
-    }
-
-    public long getCount() {
-        return count;
-    }
-
-    public void setCount(long count) {
-        this.count = count;
+    public synchronized HashMap<String, BigDecimal> getValues() {
+        HashMap<String, BigDecimal> values = new HashMap<>();
+        values.put("sum", sum);
+        values.put("avg", avg);
+        values.put("max", max);
+        values.put("min", min);
+        values.put("count", new BigDecimal(count));
+        return values;
     }
 
     @Override

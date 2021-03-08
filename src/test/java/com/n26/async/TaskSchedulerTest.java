@@ -21,7 +21,7 @@ public class TaskSchedulerTest {
     @Test
     public void testSchedule() throws InterruptedException {
         scheduler.schedule(this::someScheduledTask, 2000L, TimeUnit.MILLISECONDS);
-        Thread.sleep(3000L);
+        Thread.sleep(2100L);
         assertTrue(executed);
     }
 

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.TimeUnit;
 
+import static com.n26.cache.StatisticsCache.Operation.*;
 import static com.n26.utils.DateTimeUtils.ONE_MINUTE_MILLIS;
 import static com.n26.utils.DateTimeUtils.UTC;
 
@@ -37,18 +38,15 @@ public class TransactionServiceImpl implements TransactionService {
 
     /**
      * {@inheritDoc}
-     * Schedules deletion 1 min after its timestamp, and update statistics cache values.
+     * Schedules deletion 1 min after its timestamp, and updates statistics cache values.
      *
      * @param transaction to be created.
      */
     @Override
     public void save(Transaction transaction) {
         scheduleDeletion(transaction);
-
-        boolean isFirstTransaction = transactionsCache.getTransactions().isEmpty();
-
         transactionsCache.getTransactions().add(transaction);
-        statisticsCache.addValue(transaction.getBigDecimalAmount(), isFirstTransaction);
+        statisticsCache.update(ADD, transaction.getBigDecimalAmount());
     }
 
     /**
@@ -75,15 +73,16 @@ public class TransactionServiceImpl implements TransactionService {
         logger.info(removed ? "Transaction deleted." : "The transaction was previously removed.");
         if (removed) {
             logger.info("Updating statistics...");
-            statisticsCache.removeValue(transaction.getBigDecimalAmount());
+            statisticsCache.update(REMOVE, transaction.getBigDecimalAmount());
             logger.info("Statistics updated. " + statisticsCache);
         }
     }
 
     @Override
     public void deleteAll() {
-        statisticsCache.clear();
+        statisticsCache.update(CLEAR, null);
         transactionsCache.getTransactions().clear();
+        logger.info("All transactions deleted.");
     }
 
 }

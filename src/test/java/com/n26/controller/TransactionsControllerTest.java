@@ -40,7 +40,7 @@ public class TransactionsControllerTest  extends ControllerTest {
     @Test
     public void testDeletionAfterOneMinute() throws InterruptedException {
         transactionController.createTransaction(newTransaction("367", Instant.now(Clock.systemUTC())));
-        Thread.sleep(ONE_MINUTE_MILLIS);
+        Thread.sleep(ONE_MINUTE_MILLIS + 100);
         assertClearStatistics();
     }
 

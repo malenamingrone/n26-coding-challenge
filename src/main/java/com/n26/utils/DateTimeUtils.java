@@ -9,6 +9,6 @@ public class DateTimeUtils {
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     public static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT).withZone(UTC);
 
-    public static final long ONE_MINUTE_MILLIS = 60000;
+    public static final long ONE_MINUTE_MILLIS = 60000L;
 
 }

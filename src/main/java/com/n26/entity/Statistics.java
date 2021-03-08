@@ -3,6 +3,7 @@ package com.n26.entity;
 import com.n26.cache.StatisticsCache;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Statistics {
@@ -14,11 +15,12 @@ public class Statistics {
     private long count;
 
     public Statistics(StatisticsCache statisticsCache) {
-        this.sum = formatBigDecimal(statisticsCache.getSum());
-        this.avg = formatBigDecimal(statisticsCache.getAvg());
-        this.max = formatBigDecimal(statisticsCache.getMax());
-        this.min = formatBigDecimal(statisticsCache.getMin());
-        this.count = statisticsCache.getCount();
+        HashMap<String, BigDecimal> values = statisticsCache.getValues();
+        this.sum = formatBigDecimal(values.get("sum"));
+        this.avg = formatBigDecimal(values.get("avg"));
+        this.max = formatBigDecimal(values.get("max"));
+        this.min = formatBigDecimal(values.get("min"));
+        this.count = values.get("count").longValue();
     }
 
     private String formatBigDecimal(BigDecimal bigDecimal) {
