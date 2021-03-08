@@ -3,7 +3,7 @@
 We would like to have a RESTful API for our statistics. The main use case for the
 API is to calculate realtime statistics for the last 60 seconds of transactions.
 
-##Requirements
+## Requirements
 These are the additional requirements for the solution:
 - You are free to choose any JVM language to complete the challenge in, but
 your application has to run in Maven.
@@ -63,7 +63,7 @@ Where:
 - **min​​​​​​** - a BigDecimal specifying single lowest transaction value in the last 60 seconds
 - **count​​​​** - ​​a long specifying the total number of transactions that happened in the last 60 seconds
 
-####DELETE /transactions
+#### DELETE /transactions
 This endpoint causes all existing transactions to be deleted.
 The endpoint should accept an empty request body and return a 204 status code.
 
