@@ -15,8 +15,14 @@ public interface TransactionService {
     void save(Transaction transaction);
 
     /**
+     * Deletes one transaction.
+     *
+     * @param transaction to be deleted.
+     */
+    void delete(Transaction transaction);
+
+    /**
      * Deletes every transaction stored at that moment.
      */
     void deleteAll();
-
 }

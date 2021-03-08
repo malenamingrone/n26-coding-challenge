@@ -13,8 +13,7 @@ public class TaskScheduler {
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
     /**
-     * Schedules the computation of the statistics to every duration of time
-     * defined by a config property
+     * Creates and executes a one-shot action that becomes enabled after the given delay.
      *
      * @param task to be executed at specific time.
      * @param delay the time from now to delay execution.

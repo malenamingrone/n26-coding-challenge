@@ -1,10 +1,15 @@
 package com.n26.cache;
 
+import com.n26.entity.Transaction;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Optional;
+import java.util.Set;
+
+import static java.util.Comparator.comparing;
 
 /**
  * In memory cache for statistics.
@@ -19,6 +24,12 @@ public class StatisticsCache {
     private BigDecimal max;
     private BigDecimal min;
     private long count;
+
+    private final Set<Transaction> transactions;
+
+    public StatisticsCache(TransactionsCache transactionsCache) {
+        this.transactions = transactionsCache.getTransactions();
+    }
 
     @PostConstruct
     private void init() {
@@ -49,12 +60,22 @@ public class StatisticsCache {
         count -= 1L;
         sum = sum.subtract(amount);
         avg = calculateAverage();
-        if (isGreaterThan(max, amount)) {
-            max = amount;
+        if (max.equals(amount)) {
+            max = calculateMax();
         }
-        if (isLessThan(min, amount)) {
-            min = amount;
+        if (min.equals(amount)) {
+            min = calculateMin();
         }
+    }
+
+    private BigDecimal calculateMax() {
+        Optional<Transaction> max = transactions.parallelStream().max(comparing(Transaction::getBigDecimalAmount));
+        return max.isPresent() ? max.get().getBigDecimalAmount() : ZERO;
+    }
+
+    private BigDecimal calculateMin() {
+        Optional<Transaction> min = transactions.parallelStream().min(comparing(Transaction::getBigDecimalAmount));
+        return min.isPresent() ? min.get().getBigDecimalAmount() : ZERO;
     }
 
     private BigDecimal calculateAverage() {

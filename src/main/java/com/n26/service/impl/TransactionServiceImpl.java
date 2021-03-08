@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +48,7 @@ public class TransactionServiceImpl implements TransactionService {
         boolean isFirstTransaction = transactionsCache.getTransactions().isEmpty();
 
         transactionsCache.getTransactions().add(transaction);
-        statisticsCache.addValue(new BigDecimal(transaction.getAmount()), isFirstTransaction);
+        statisticsCache.addValue(transaction.getBigDecimalAmount(), isFirstTransaction);
     }
 
     /**
@@ -69,11 +68,13 @@ public class TransactionServiceImpl implements TransactionService {
      *
      * @param transaction to be deleted.
      */
+    @Override
     public void delete(Transaction transaction) {
         logger.info("Deleting " + transaction);
         transactionsCache.getTransactions().remove(transaction);
         logger.info("Updating statistics...");
-        statisticsCache.removeValue(new BigDecimal(transaction.getAmount()));
+        statisticsCache.removeValue(transaction.getBigDecimalAmount());
+        logger.info("Statistics updated. " + statisticsCache);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.n26.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -17,6 +18,10 @@ public class Transaction {
 
     public String getAmount() {
         return amount;
+    }
+
+    public BigDecimal getBigDecimalAmount() {
+        return new BigDecimal(amount);
     }
 
     public void setAmount(String amount) {
