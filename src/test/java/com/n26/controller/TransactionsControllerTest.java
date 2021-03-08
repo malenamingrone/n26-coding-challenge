@@ -23,7 +23,7 @@ public class TransactionsControllerTest  extends ControllerTest {
 
     @Test
     public void testCreateTransaction() {
-        Transaction transaction = newTransaction("67", Instant.now(Clock.systemUTC()));
+        Transaction transaction = newTransaction("167", Instant.now(Clock.systemUTC()));
         transactionController.createTransaction(transaction);
         assertEquals(1, transactionsCache.getTransactions().size());
         assertTrue(transactionsCache.getTransactions().contains(transaction));
@@ -31,15 +31,15 @@ public class TransactionsControllerTest  extends ControllerTest {
 
     @Test
     public void testDeleteAllTransactions() {
-        transactionController.createTransaction(newTransaction("67", Instant.now(Clock.systemUTC())));
-        transactionController.createTransaction(newTransaction("76", Instant.now(Clock.systemUTC())));
+        transactionController.createTransaction(newTransaction("267", Instant.now(Clock.systemUTC())));
+        transactionController.createTransaction(newTransaction("276", Instant.now(Clock.systemUTC())));
         transactionController.deleteTransactions();
         assertEquals(0, transactionsCache.getTransactions().size());
     }
 
     @Test
     public void testDeletionAfterOneMinute() throws InterruptedException {
-        transactionController.createTransaction(newTransaction("67", Instant.now(Clock.systemUTC())));
+        transactionController.createTransaction(newTransaction("367", Instant.now(Clock.systemUTC())));
         Thread.sleep(ONE_MINUTE_MILLIS);
         assertClearStatistics();
     }

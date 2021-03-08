@@ -71,10 +71,13 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void delete(Transaction transaction) {
         logger.info("Deleting " + transaction);
-        transactionsCache.getTransactions().remove(transaction);
-        logger.info("Updating statistics...");
-        statisticsCache.removeValue(transaction.getBigDecimalAmount());
-        logger.info("Statistics updated. " + statisticsCache);
+        boolean removed = transactionsCache.getTransactions().remove(transaction);
+        logger.info(removed ? "Transaction deleted." : "The transaction was previously removed.");
+        if (removed) {
+            logger.info("Updating statistics...");
+            statisticsCache.removeValue(transaction.getBigDecimalAmount());
+            logger.info("Statistics updated. " + statisticsCache);
+        }
     }
 
     @Override
